@@ -69,3 +69,8 @@ The current prototype supports:
 - Add charts and resource utilization metrics
 - Compare different allocation strategies
 - Improve the simulation over time
+#Prototype:1
+backend/
+frontend/
+README.md
+.gitignore
