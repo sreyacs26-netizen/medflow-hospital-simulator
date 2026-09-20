@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDFLOW</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+    <h1>🏥 MEDFLOW</h1>
+    <p>Hospital Resource Management Simulator</p>
+</header>
+
+<main>
+    <section class="panel">
+        <h2>1. Hospital Resources</h2>
+        <p class="hint">Enter how many resources are currently available.</p>
+        <div class="resource-inputs">
+            <label>Beds <input id="beds" type="number" min="0" value="63"></label>
+            <label>ICU Beds <input id="icu" type="number" min="0" value="3"></label>
+            <label>Doctors <input id="doctors" type="number" min="0" value="8"></label>
+            <label>Nurses <input id="nurses" type="number" min="0" value="15"></label>
+            <label>Operating Rooms <input id="operating_rooms" type="number" min="0" value="2"></label>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-title">
+            <div>
+                <h2>2. Patients</h2>
+                <p class="hint">Add patients, then MEDFLOW will calculate priority and allocate resources.</p>
+            </div>
+            <button id="addPatientBtn" class="secondary">+ Add Patient</button>
+        </div>
+
+        <div id="patientInputs"></div>
+
+        <button id="simulateBtn" class="primary">▶ Run MEDFLOW Simulation</button>
+    </section>
+
+    <section class="cards" id="resourceCards"></section>
+
+    <section class="panel">
+        <h2>3. Patient Evaluation</h2>
+        <div id="patientTable"><p class="hint">Run the simulation to see results.</p></div>
+    </section>
+
+    <section class="panel">
+        <h2>4. Simulation Results</h2>
+        <div id="results" class="results-empty">No simulation run yet.</div>
+    </section>
+
+    <section class="panel model">
+        <h2>🧮 Mathematical Model</h2>
+        <div class="formula">Priority = (Urgency × 10) + Waiting Time</div>
+        <p><b>Urgency values:</b> High = 3, Medium = 2, Low = 1</p>
+        <p>MEDFLOW first calculates a priority score. It then checks whether every resource required by a patient is available.</p>
+        <div id="calculationExample"></div>
+    </section>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
