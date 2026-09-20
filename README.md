@@ -32,7 +32,7 @@ The system then:
 
 Our current prototype uses:
 
-Priority = (Urgency × 10) + Waiting Time
+Priority = (Urgency × 100) + Waiting Time
 
 Urgency values:
 
