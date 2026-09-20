@@ -1,33 +1,25 @@
+"""Patient priority logic used by the MEDFLOW simulator.
+
+Integrated from the team's High/Medium/Low priority model and adapted so the
+Streamlit simulator can continue using its Red/Yellow/Green triage labels.
+"""
+
 URGENCY = {"High": 3, "Medium": 2, "Low": 1}
-
-# How much urgency counts compared to waiting time.
-# 100 means urgency dominates: waiting time mostly breaks ties.
-URGENCY_WEIGHT = 100
+TRIAGE_TO_URGENCY = {"Red": "High", "Yellow": "Medium", "Green": "Low"}
 
 
-def calculate_priority(patient, shortage_mode=False):
-    """
-    Normal mode:   (urgency x 100) + waiting time
-    Shortage mode: (urgency x 100 x survival chance) + waiting time
-
-    survival_chance is a percentage from 0 to 100.
-    If a patient has no survival_chance, we assume 100 (no penalty).
-    """
-    urgency = URGENCY.get(patient["urgency"].capitalize(), 1)
-    waiting = patient["waiting_time"]
-
-    if shortage_mode:
-        chance = patient.get("survival_chance", 100)
-        chance = max(0, min(100, chance))  # keep it between 0 and 100
-        return round(urgency * URGENCY_WEIGHT * (chance / 100) + waiting, 1)
-
-    return urgency * URGENCY_WEIGHT + waiting
+def calculate_priority(patient):
+    """Priority = (Urgency x 100) + waiting time."""
+    urgency_name = patient.get("urgency")
+    if urgency_name is None:
+        urgency_name = TRIAGE_TO_URGENCY.get(patient.get("triage", "Green"), "Low")
+    urgency = URGENCY.get(str(urgency_name).capitalize(), 1)
+    waiting_time = patient.get("waiting_time", patient.get("waiting_minutes", 0))
+    return (urgency * 100) + int(waiting_time)
 
 
-def sort_patients(patients, shortage_mode=False):
-    """Score every patient, then sort highest priority first."""
+def sort_patients(patients):
+    """Score every patient and return highest priority first."""
     for patient in patients:
-        patient["priority"] = calculate_priority(patient, shortage_mode)
-
-    patients.sort(key=lambda p: p["priority"], reverse=True)
-    return patients
+        patient["priority"] = calculate_priority(patient)
+    return sorted(patients, key=lambda p: p["priority"], reverse=True)

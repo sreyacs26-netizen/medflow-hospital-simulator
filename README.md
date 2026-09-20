@@ -1,76 +1,67 @@
-# medflow-hospital-simulator
-Hospital resource management simulator for Hack-a-Matics 2026
 # MEDFLOW — Hospital Resource Management Simulator
 
-MEDFLOW is a hospital resource management simulator developed for our hackathon.
+MEDFLOW is a Streamlit-based hospital resource management simulator developed for Hack-a-Matics 2026.
 
-## Problem
+The project combines the team's three contributions into one working prototype:
 
-Hospitals have limited resources such as beds, ICU beds, doctors, nurses and operating rooms. At the same time, patients can have different urgency levels and waiting times.
+- **Frontend / integration:** Streamlit operations dashboard, simulation controls, patient flow, resource tables and waiting queue.
+- **Priority model:** `Priority = (Urgency × 100) + Waiting Time`, with High/Medium/Low urgency mapped to the existing Red/Yellow/Green triage labels.
+- **Resource-allocation model:** checks all required resources before allocation and reports the exact bottleneck when a patient must wait.
 
-MEDFLOW simulates how these limited resources can be allocated to patients.
+## Simulation flow
 
-## How it works
+```text
+Patient arrival
+      ↓
+Priority calculation
+      ↓
+Specialist availability check
+      ↓
+If specialist unavailable → Emergency stabilization
+      ↓
+Required resource check
+      ↓
+Bed / ICU / Operating Room allocation
+      ↓
+Treatment
+      ↓
+Resource release
+      ↓
+ICU cases → short General Bed recovery → completion
+```
 
-The system takes:
+## Emergency surge
 
-- Hospital resource availability
-- Patient urgency
-- Patient waiting time
-- Patient resource requirements
+The sidebar includes a demo **Trigger Emergency Surge** button. It creates a synthetic wave of emergency arrivals. When emergency capacity is exhausted, overflow cases are marked **External Transfer Recommended** and shown in a dedicated transfer table. This is a simulation feature, not a real transfer protocol.
 
-The system then:
+## Resource checks
 
-1. Calculates a priority score for each patient.
-2. Sorts patients according to priority.
-3. Checks whether the required resources are available.
-4. Allocates resources when possible.
-5. Keeps patients waiting when resources are unavailable.
-6. Displays the results through a dashboard.
+Each treatment case requires a doctor and nurse plus the treatment resource:
 
-## Mathematical Model
+- **ICU:** ICU bed + general bed
+- **General bed:** general bed
+- **Surgery:** operating room + general bed
 
-Our current prototype uses:
+If a required resource is unavailable, the patient stays in the waiting queue and the dashboard shows the reason, for example `No ICU bed available` or `Operating room` / specialist constraints.
 
-Priority = (Urgency × 100) + Waiting Time
+## Run locally
 
-Urgency values:
+From the project folder:
 
-- High = 3
-- Medium = 2
-- Low = 1
+```bash
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
 
-This is a simulation heuristic used to demonstrate priority-based hospital resource allocation.
+## Files
 
-## Technology
+- `app.py` — Streamlit frontend and dashboard
+- `simulation.py` — patient arrivals, priority ordering, routing, treatment and simulation clock
+- `priority.py` — integrated team priority calculation
+- `resources.py` — hospital capacity and allocation logic
+- `test_priority.py` — basic priority-system test
+- `DESIGN_BASIS.md` — prototype assumptions and design scope
 
-- Python
-- Flask
-- HTML
-- CSS
-- JavaScript
+## Scope
 
-## Current Status
-
-The current prototype supports:
-
-- Hospital resource inputs
-- Patient inputs
-- Priority calculation
-- Resource allocation
-- Resource shortage simulation
-- Patient evaluation
-- Simulation results
-
-## Future Improvements
-
-- Improve the priority/optimization model
-- Add more realistic hospital scenarios
-- Add charts and resource utilization metrics
-- Compare different allocation strategies
-- Improve the simulation over time
-#Prototype:1
-backend/
-frontend/
-README.md
-.gitignore
+All patient cases, staffing levels and hospital capacities are synthetic demonstration data. The routing and scheduling rules are simplified prototype assumptions and are **not clinical decision formulas or medical advice**.
